@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button>點擊發起通知</button>
+  </body>
+  <script>
+    window.addEventListener("load", function() {
+      // 首先，讓我們檢查我們是否有許可權發出通知
+      // 如果沒有，我們就請求獲得許可權
+      if (window.Notification && Notification.permission !== "granted") {
+        Notification.requestPermission(function(status) {
+          if (Notification.permission !== status) {
+            Notification.permission = status;
+          }
+        });
+      }
+
+      var button = document.getElementsByTagName("button")[0];
+
+      button.addEventListener("click", function() {
+        // 如果使用者同意就建立一個通知
+        if (window.Notification && Notification.permission === "granted") {
+          var n = new Notification("Hi！");
+        }
+
+        // 如果使用者沒有選擇是否顯示通知
+        // 注：因為在 Chrome 中我們無法確定 permission 屬性是否有值，因此
+        // 檢查該屬性的值是否是 "default" 是不安全的。
+        else if (window.Notification && Notification.permission !== "denied") {
+          Notification.requestPermission(function(status) {
+            if (Notification.permission !== status) {
+              Notification.permission = status;
+            }
+
+            // 如果使用者同意了
+            if (status === "granted") {
+              var n = new Notification("Hi!");
+            }
+
+            // 否則，我們可以讓步的使用常規模態的 alert
+            else {
+              alert("Hi!");
+            }
+          });
+        }
+
+        // 如果使用者拒絕接受通知
+        else {
+          // 我們可以讓步的使用常規模態的 alert
+          alert("Hi!");
+        }
+      });
+    });
+  </script>
+</html>
